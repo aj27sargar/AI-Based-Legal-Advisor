@@ -1,6 +1,6 @@
 import express from "express";
 import { dbConnection } from "./database/dbConnection.js";
-import jobRouter from "./routes/jobRoutes.js";
+import documentRouter from "./routes/documentRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import applicationRouter from "./routes/applicationRoutes.js";
 // import LawyerRouter from "./routes/LawyerRoutes.js";
@@ -32,7 +32,7 @@ app.use(
   })
 );
 app.use("/api/v1/user", userRouter);
-app.use("/api/v1/job", jobRouter);
+app.use("/api/v1/document", documentRouter);
 app.use("/api/v1/application", applicationRouter);
 // app.use("/api/v1/lawyer", LawyerRouter);
 dbConnection();

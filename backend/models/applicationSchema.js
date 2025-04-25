@@ -43,7 +43,7 @@ const applicationSchema = new mongoose.Schema({
     },
     role: {
       type: String,
-      enum: ["Job Seeker"], // Updated from ["User"] to ["Job Seeker"]
+      enum: ["Document Seeker"],
       required: true,
     },
   },
@@ -55,7 +55,7 @@ const applicationSchema = new mongoose.Schema({
     },
     role: {
       type: String,
-      enum: ["Employer"], // Updated from ["Lawyer"] to ["Employer"]
+      enum: ["Employer"],
       required: true,
     },
   },

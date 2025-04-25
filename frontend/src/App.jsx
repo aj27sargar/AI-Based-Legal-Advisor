@@ -9,13 +9,13 @@ import axios from "axios";
 import Navbar from "./components/Layout/Navbar";
 import Footer from "./components/Home/Footer";
 import Home from "./components/Home/Home";
-import Jobs from "./components/Job/Jobs";
-import JobDetails from "./components/Job/JobDetails";
+import Documents from "./components/Document/Documents";
+import DocumentDetails from "./components/Document/DocumentDetails";
 import Application from "./components/Application/Application";
 import MyApplications from "./components/Application/MyApplications";
-import PostJob from "./components/Job/PostJob";
+import PostDocument from "./components/Document/PostDocument";
 import NotFound from "./components/NotFound/NotFound";
-import MyJobs from "./components/Job/MyJobs";
+import MyDocuments from "./components/Document/MyDocuments";
 import Blogs from "./components/Blogs/Blogs";
 import BlogDetail from "./components/Blogs/BlogDetail";
 import Chatbot from './components/ChatBot/Chatbot';
@@ -53,12 +53,12 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/" element={<Home />} />
-          <Route path="/job/getall" element={<Jobs />} />
-          <Route path="/job/:id" element={<JobDetails />} />
+          <Route path="/document/getall" element={<Documents />} />
+          <Route path="/document/:id" element={<DocumentDetails />} />
           <Route path="/application/:id" element={<Application />} />
           <Route path="/applications/me" element={<MyApplications />} />
-          <Route path="/job/post" element={<PostJob />} />
-          <Route path="/job/me" element={<MyJobs />} />
+          <Route path="/document/post" element={<PostDocument />} />
+          <Route path="/document/me" element={<MyDocuments />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blog-detail" element={<BlogDetail />} />

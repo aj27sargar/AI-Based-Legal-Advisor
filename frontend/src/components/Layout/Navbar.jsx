@@ -15,7 +15,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       // const response = await axios.get("http://be-project-axa3.onrender.com/api/v1/user/logout", {
-        const response = await axios.get("http://localhost:4000/api/v1/user/logout", {
+      const response = await axios.get("http://localhost:4000/api/v1/user/logout", {
         withCredentials: true,
       });
       toast.success(response.data.message);
@@ -71,7 +71,7 @@ const Navbar = () => {
 
           {/* Common Links */}
           <li>
-            <Link to="/job/getall" onClick={() => setShow(false)}>
+            <Link to="/document/getall" onClick={() => setShow(false)}>
               ALL DOCUMENTS
             </Link>
           </li>
@@ -85,12 +85,12 @@ const Navbar = () => {
           {user && user.role === "Lawyer" && (
             <>
               <li>
-                <Link to="/job/post" onClick={() => setShow(false)}>
+                <Link to="/document/post" onClick={() => setShow(false)}>
                   POST NEW DOCUMENTS
                 </Link>
               </li>
               <li>
-                <Link to="/job/me" onClick={() => setShow(false)}>
+                <Link to="/document/me" onClick={() => setShow(false)}>
                   VIEW YOUR DOCUMENTS
                 </Link>
               </li>
@@ -98,16 +98,12 @@ const Navbar = () => {
           )}
 
           {/* Logout Button */}
-          {isAuthorized && (
-            <li>
-              <button onClick={handleLogout} className="logout-btn">
-                LOGOUT
-              </button>
-            </li>
-          )}
+          <li>
+            <button onClick={handleLogout}>LOGOUT</button>
+          </li>
         </ul>
 
-        {/* Hamburger Menu for Mobile */}
+        {/* Mobile Menu Button */}
         <div className="hamburger">
           <GiHamburgerMenu onClick={() => setShow(!show)} />
         </div>
