@@ -98,9 +98,12 @@ FRONTEND_URL=http://localhost:5173
 
 | Feature | Screenshot |
 |:--------|:------------|
-| Home Page | (Add Screenshot) |
-| AI Consultation Form | (Add Screenshot) |
-| User Login/Register | (Add Screenshot) |
+| Home Page | (Add Scr![Screenshot 2025-02-20 095618](https://github.com/user-attachments/assets/3c3100e4-ea58-495f-937e-cbd949306c4f)
+eenshot) |
+| AI Consultation Form | (Add Screensh![Screenshot 2025-02-25 120354](https://github.com/user-attachments/assets/f5745f8c-875b-4934-aa85-1f86b5051596)
+ot) |
+| User Login/Register | (Add Screens![Screenshot 2025-02-20 095503](https://github.com/user-attachments/assets/9816d1be-57e3-4018-a445-0841b2dba2c2)
+hot) |
 
 ---
 
