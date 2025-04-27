@@ -29,7 +29,7 @@ const MyDocuments = () => {
         fetchDocuments();
     }, []);
 
-    if (!isAuthorized || (user && user.role !== "Employer")) {
+    if (!isAuthorized || (user && user.role !== "Lawyer")) {
         navigateTo("/");
     }
 

@@ -5,6 +5,7 @@ import {
   userGetAllApplications,
   postApplication,
   approveApplication, // ✅ Added approve function
+  updateApplication,
 } from "../controllers/applicationController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
@@ -17,5 +18,6 @@ router.delete("/delete/:id", isAuthenticated, userDeleteApplication);
 
 // ✅ New route to approve application (change status to "Completed")
 router.put("/approve/:id", isAuthenticated, approveApplication);
+router.put("/update/:id", isAuthenticated, updateApplication);
 
 export default router;

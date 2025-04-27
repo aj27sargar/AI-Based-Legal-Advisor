@@ -7,12 +7,12 @@ const Chatbot = () => {
     // Inject Botpress script when the component mounts
     const injectBotpressScript = () => {
       const script = document.createElement("script");
-      script.src = "https://cdn.botpress.cloud/webchat/v2.2/inject.js"; 
+      script.src = "https://cdn.botpress.cloud/webchat/v2.2/inject.js";
       script.async = true;
       document.body.appendChild(script);
 
       const configScript = document.createElement("script");
-      configScript.src = "https://files.bpcontent.cloud/2025/02/24/12/20250224124337-G1WSOQIU.js"; 
+      configScript.src = "https://files.bpcontent.cloud/2025/02/24/12/20250224124337-G1WSOQIU.js";
       configScript.async = true;
       document.body.appendChild(configScript);
 

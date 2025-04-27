@@ -90,7 +90,7 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/document/me" onClick={() => setShow(false)}>
+                <Link to="/document/getmydocuments" onClick={() => setShow(false)}>
                   VIEW YOUR DOCUMENTS
                 </Link>
               </li>

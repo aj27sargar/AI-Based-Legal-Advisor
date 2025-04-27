@@ -4,11 +4,12 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ResumeModal from "./ResumeModal";
-// import { BASE_URL } from '../../utils/config'
+import { BASE_URL } from "../utils/config";
 
 const MyApplications = () => {
   const { user, isAuthorized } = useContext(Context);
   const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [resumeImageUrl, setResumeImageUrl] = useState("");
   const navigateTo = useNavigate();
@@ -23,15 +24,15 @@ const MyApplications = () => {
       try {
         const endpoint =
           user?.role === "Lawyer"
-            // ? "http://be-project-axa3.onrender.com/api/v1/application/lawyer/getall"
-            // : "http://be-project-axa3.onrender.com/api/v1/application/user/getall";
-            ? "http://localhost:4000/api/v1/application/lawyer/getall"
-            : "http://localhost:4000/api/v1/application/user/getall";
+            ? `${BASE_URL}/application/lawyer/getall`
+            : `${BASE_URL}/application/user/getall`;
 
         const { data } = await axios.get(endpoint, { withCredentials: true });
         setApplications(data.applications);
+        setLoading(false);
       } catch (error) {
         toast.error(error.response?.data?.message || "Failed to fetch applications");
+        setLoading(false);
       }
     };
 
@@ -40,8 +41,7 @@ const MyApplications = () => {
 
   const deleteApplication = async (id) => {
     try {
-      // const { data } = await axios.delete(`http://be-project-axa3.onrender.com/api/v1/application/delete/${id}`, {
-        const { data } = await axios.delete(`http://localhost:4000/api/v1/application/delete/${id}`, {
+      const { data } = await axios.delete(`${BASE_URL}/application/delete/${id}`, {
         withCredentials: true,
       });
 
@@ -52,19 +52,29 @@ const MyApplications = () => {
     }
   };
 
+  const updateApplication = async (id) => {
+    try {
+      const { data } = await axios.put(
+        `${BASE_URL}/application/update/${id}`,
+        { withCredentials: true }
+      );
+
+      toast.success(data.message);
+      navigateTo("/application/update");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update application");
+    }
+  };
+
   const updateApplicationStatus = async (id, status) => {
     try {
       const { data } = await axios.put(
-        // `http://be-project-axa3.onrender.com/api/v1/application/approve/${id}`,
-        `http://localhost:4000/api/v1/application/approve/${id}`,
+        `${BASE_URL}/application/approve/${id}`,
         { status },
         { withCredentials: true }
       );
 
       toast.success(`Application marked as ${status}`);
-      fetchApplications();
-      
-      // 🔥 Instantly update the state to reflect changes without refreshing
       setApplications((prev) =>
         prev.map((app) => (app._id === id ? { ...app, status } : app))
       );
@@ -78,31 +88,266 @@ const MyApplications = () => {
     setModalOpen(true);
   };
 
+  if (loading) {
+    return (
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh"
+      }}>
+        <div style={{
+          width: "50px",
+          height: "50px",
+          border: "5px solid #f3f3f3",
+          borderTop: "5px solid #3498db",
+          borderRadius: "50%",
+          animation: "spin 1s linear infinite"
+        }}></div>
+      </div>
+    );
+  }
+
   return (
-    <section className="my_applications page">
-      <div className="container">
-        <h1>{user?.role === "User" ? "My Applications" : "Applications From Users"}</h1>
+    <section style={{
+      padding: "2rem",
+      backgroundColor: "#f5f5f5",
+      minHeight: "100vh"
+    }}>
+      <div style={{
+        maxWidth: "1200px",
+        margin: "0 auto"
+      }}>
+        <h1 style={{
+          textAlign: "center",
+          color: "#2c3e50",
+          marginBottom: "2rem",
+          fontSize: "2rem"
+        }}>{user?.role === "Lawyer" ? "Applications From Users" : "My Applications"}</h1>
+
         {applications.length === 0 ? (
-          <h4>No Applications Found</h4>
+          <div style={{
+            textAlign: "center",
+            padding: "2rem",
+            backgroundColor: "white",
+            borderRadius: "8px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+          }}>
+            <p style={{ color: "#7f8c8d", fontSize: "1.2rem" }}>No applications found!</p>
+          </div>
         ) : (
-          applications.map((element) =>
-            user?.role === "User" ? (
-              <UserCard
-                key={element._id}
-                element={element}
-                deleteApplication={deleteApplication}
-                openModal={openModal}
-              />
-            ) : (
-              <LawyerCard
-                key={element._id}
-                element={element}
-                openModal={openModal}
-                onAccept={() => updateApplicationStatus(element._id, "Completed")}
-                onReject={() => updateApplicationStatus(element._id, "Rejected")}
-              />
-            )
-          )
+          <div style={{
+            display: "grid",
+            gap: "1.5rem"
+          }}>
+            {applications.map((element) => (
+              <div key={element._id} style={{
+                backgroundColor: "white",
+                borderRadius: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                padding: "1.5rem",
+                transition: "transform 0.2s",
+                "&:hover": {
+                  transform: "translateY(-2px)"
+                }
+              }}>
+                <div style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "flex-start",
+                  marginBottom: "1rem"
+                }}>
+                  <div>
+                    <h3 style={{
+                      color: "#2c3e50",
+                      marginBottom: "0.5rem",
+                      fontSize: "1.2rem"
+                    }}>Application Details</h3>
+                    <p style={{
+                      color: "#7f8c8d",
+                      marginBottom: "0.5rem"
+                    }}>Status: <span style={{
+                      color: element.status === "Completed" ? "#27ae60" :
+                        element.status === "Rejected" ? "#e74c3c" : "#f39c12",
+                      fontWeight: "bold"
+                    }}>{element.status}</span></p>
+                  </div>
+                  <div style={{
+                    display: "flex",
+                    gap: "0.5rem"
+                  }}>
+                    {user?.role === "Lawyer" ? (
+                      <>
+                        <button
+                          onClick={() => updateApplicationStatus(element._id, "Completed")}
+                          disabled={element.status === "Completed" || element.status === "Rejected"}
+                          style={{
+                            backgroundColor: "#27ae60",
+                            color: "white",
+                            padding: "0.5rem 1rem",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: (element.status === "Completed" || element.status === "Rejected") ? "not-allowed" : "pointer",
+                            opacity: (element.status === "Completed" || element.status === "Rejected") ? 0.5 : 1,
+                            fontSize: "0.9rem"
+                          }}
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => updateApplicationStatus(element._id, "Rejected")}
+                          disabled={element.status === "Completed" || element.status === "Rejected"}
+                          style={{
+                            backgroundColor: "#e74c3c",
+                            color: "white",
+                            padding: "0.5rem 1rem",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: (element.status === "Completed" || element.status === "Rejected") ? "not-allowed" : "pointer",
+                            opacity: (element.status === "Completed" || element.status === "Rejected") ? 0.5 : 1,
+                            fontSize: "0.9rem"
+                          }}
+                        >
+                          Reject
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {element.status === "Pending" && (
+                          <button
+                            onClick={() => updateApplication(element._id)}
+                            style={{
+                              backgroundColor: "#3498db",
+                              color: "white",
+                              padding: "0.5rem 1rem",
+                              border: "none",
+                              borderRadius: "4px",
+                              cursor: "pointer",
+                              fontSize: "0.9rem"
+                            }}
+                          >
+                            Edit
+                          </button>
+                        )}
+                        <button
+                          onClick={() => deleteApplication(element._id)}
+                          style={{
+                            backgroundColor: "#e74c3c",
+                            color: "white",
+                            padding: "0.5rem 1rem",
+                            border: "none",
+                            borderRadius: "4px",
+                            cursor: "pointer",
+                            fontSize: "0.9rem"
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                  gap: "1rem",
+                  marginBottom: "1rem"
+                }}>
+                  <div>
+                    <h4 style={{
+                      color: "#2c3e50",
+                      marginBottom: "0.5rem",
+                      fontSize: "1rem"
+                    }}>Personal Information</h4>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Name:</strong> {element.name}
+                    </p>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Email:</strong> {element.email}
+                    </p>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Phone:</strong> {element.phone}
+                    </p>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Gender:</strong> {element.gender}
+                    </p>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Birth Date:</strong> {new Date(element.birthDate).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div>
+                    <h4 style={{
+                      color: "#2c3e50",
+                      marginBottom: "0.5rem",
+                      fontSize: "1rem"
+                    }}>Document Details</h4>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Aadhar Number:</strong> {element.aadharNumber}
+                    </p>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>PAN Number:</strong> {element.panNumber}
+                    </p>
+                    {element.drivingLicense && (
+                      <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                        <strong>Driving License:</strong> {element.drivingLicense}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <h4 style={{
+                      color: "#2c3e50",
+                      marginBottom: "0.5rem",
+                      fontSize: "1rem"
+                    }}>Additional Information</h4>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Address:</strong> {element.address}
+                    </p>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Document Purpose:</strong> {element.documentPurpose}
+                    </p>
+                    <p style={{ color: "#7f8c8d", marginBottom: "0.3rem" }}>
+                      <strong>Applied On:</strong> {new Date(element.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+
+                {element.resume && (
+                  <div style={{
+                    marginTop: "1rem",
+                    paddingTop: "1rem",
+                    borderTop: "1px solid #eee"
+                  }}>
+                    <h4 style={{
+                      color: "#2c3e50",
+                      marginBottom: "0.5rem",
+                      fontSize: "1rem"
+                    }}>Uploaded Document</h4>
+                    <a
+                      href={element.resume.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        color: "#3498db",
+                        textDecoration: "none",
+                        display: "inline-block",
+                        padding: "0.5rem 1rem",
+                        backgroundColor: "#f8f9fa",
+                        borderRadius: "4px",
+                        "&:hover": {
+                          textDecoration: "underline"
+                        }
+                      }}
+                    >
+                      View Document
+                    </a>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </div>
       {modalOpen && <ResumeModal imageUrl={resumeImageUrl} onClose={() => setModalOpen(false)} />}
@@ -111,98 +356,3 @@ const MyApplications = () => {
 };
 
 export default MyApplications;
-
-const UserCard = ({ element, deleteApplication, openModal }) => (
-  <div className="user_card">
-    <div className="detail">
-      <p><span>Name:</span> {element.name}</p>
-      <p><span>Email:</span> {element.email}</p>
-      <p><span>Phone:</span> {element.phone}</p>
-      <p><span>Address:</span> {element.address}</p>
-      <p><span>Cover Letter:</span> {element.coverLetter}</p>
-    </div>
-
-    <div className="resume" style={{ textAlign: "center" }}>
-      <img
-        src={element.resume.url}
-        alt="resume"
-        style={{ width: "480px", height: "250px", objectFit: "cover", cursor: "pointer" }}
-        onClick={() => openModal(element.resume.url)}
-      />
-    </div>
-
-    {/* ✅ STATUS BUTTON (Changes Color Dynamically) */}
-    <div className="status_area">
-      <button
-        style={{
-          padding: "8px 12px",
-          border: "none",
-          borderRadius: "5px",
-          fontWeight: "bold",
-          backgroundColor: element.status === "Completed" ? "#4CAF50" : "#FF9800",
-          color: "white",
-          width: "120px",
-          height: "40px",
-        }}
-        disabled
-      >
-        {element.status}
-      </button>
-    </div>
-
-    <div className="btn_area">
-      <button
-        onClick={() => deleteApplication(element._id)}
-        style={{
-          padding: "8px 12px",
-          border: "none",
-          borderRadius: "5px",
-          fontWeight: "bold",
-          backgroundColor: "#FF4D4D",
-          color: "white",
-          width: "120px",
-          height: "40px",
-          cursor: "pointer",
-        }}
-      >
-        Delete
-      </button>
-    </div>
-  </div>
-);
-
-const LawyerCard = ({ element, openModal, onAccept, onReject }) => (
-  <div className="user_card">
-    <div className="detail">
-      <p><span>Name:</span> {element.name}</p>
-      <p><span>Email:</span> {element.email}</p>
-      <p><span>Phone:</span> {element.phone}</p>
-      <p><span>Address:</span> {element.address}</p>
-      <p><span>Cover Letter:</span> {element.coverLetter}</p>
-    </div>
-
-    <div className="resume" style={{ textAlign: "center" }}>
-      <img
-        src={element.resume.url}
-        alt="resume"
-        style={{ width: "480px", height: "250px", objectFit: "cover", cursor: "pointer" }}
-        onClick={() => openModal(element.resume.url)}
-      />
-    </div>
-
-    <div className="btn_area" style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-      <button
-        onClick={onAccept}
-        style={{ padding: "8px 12px", backgroundColor: "#4CAF50", color: "white", width: "120px", height: "40px", borderRadius: "5px" }}
-      >
-        Accept
-      </button>
-      <button
-        onClick={onReject}
-        style={{ padding: "8px 12px", backgroundColor: "#FF4D4D", color: "white", width: "120px", height: "40px", borderRadius: "5px" }}
-      >
-        Reject
-      </button>
-    </div>
-  </div>
-);

@@ -58,7 +58,7 @@ const App = () => {
           <Route path="/application/:id" element={<Application />} />
           <Route path="/applications/me" element={<MyApplications />} />
           <Route path="/document/post" element={<PostDocument />} />
-          <Route path="/document/me" element={<MyDocuments />} />
+          <Route path="/document/getmydocuments" element={<MyDocuments />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/blogs" element={<Blogs />} />
           <Route path="/blog-detail" element={<BlogDetail />} />
